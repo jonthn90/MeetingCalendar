@@ -310,7 +310,7 @@ public class InsertActivity extends AppCompatActivity {
 
             if (!mSchedule.get(position).availability){
                 mViewHolder.mLayoutTime.setBackgroundColor(getResources().getColor(R.color.red_item));
-                mViewHolder.mLayoutTime.setPadding(0,0,0,0);
+                mViewHolder.mLayoutTime.setPadding(0,0,0,45);
             }
 
             String time = "" + mSchedule.get(position).timeStart.get(Calendar.HOUR_OF_DAY) + ":" +
