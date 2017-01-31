@@ -305,7 +305,7 @@ public class InsertActivity extends AppCompatActivity {
 
             if (mSelectedSchedule == position) {
                 mViewHolder.mLayoutTime.setBackgroundColor(getResources().getColor(R.color.blue_item));
-                mViewHolder.mLayoutTime.setPadding(0,5,0,5);
+                mViewHolder.mLayoutTime.setPadding(0,5,0,15);
             }
 
             if (!mSchedule.get(position).availability){
