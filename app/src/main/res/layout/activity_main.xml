@@ -60,4 +60,15 @@
         android:layout_height="2dp"
         android:background="@color/blue_item"></LinearLayout>
 
+    <Button
+        android:text="Cita Formiik"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/button_meeting"
+        android:layout_gravity="center_horizontal"
+        android:padding="20dp"
+        android:layout_margin="20dp"/>
+
 </LinearLayout>

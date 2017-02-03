@@ -29,13 +29,12 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
 
-    private Button mInsertEventButton, mViewCalendarButton;
+    private Button mInsertEventButton, mViewCalendarButton, mMeetingFormiikButton;
 
     private TextView mTextAccount;
 
     private ArrayList<String> mAccountsList;
     private String mAccount;
-
 
     private final int MY_PERMISSIONS_REQUEST_GET_ACCOUNTS = 0x01;
     private final int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 0x02;
@@ -68,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), ViewCalendarActivity.class);
 
+                startActivity(intent);
+
+            }
+        });
+
+        mMeetingFormiikButton = (Button) findViewById(R.id.button_meeting);
+        mMeetingFormiikButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getApplicationContext(), ActivityWidgetMeeting.class);
+                intent.putExtra("mAccount", mAccount);
                 startActivity(intent);
 
             }

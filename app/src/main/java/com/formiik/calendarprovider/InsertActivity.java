@@ -72,8 +72,6 @@ public class InsertActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert);
 
-
-
         Intent intent = getIntent();
         mAccount = intent.getStringExtra("mAccount");
 
@@ -178,10 +176,10 @@ public class InsertActivity extends AppCompatActivity {
 
         mSchedule = new ArrayList<>();
 
-        int hour = 7;
+        int hour = 0;
         int minute = 0;
 
-        for (int i = 1; hour <= 22; i++) {
+        for (int i = 1; hour <= 24; i++) {
 
             Calendar scheduleTStart = Calendar.getInstance();
             scheduleTStart.set(mSelectedDate.get(Calendar.YEAR), mSelectedDate.get(Calendar.MONTH), mSelectedDate.get(Calendar.DAY_OF_MONTH), hour, minute);
@@ -202,6 +200,7 @@ public class InsertActivity extends AppCompatActivity {
 
                 long diff = eventTEnd.getTimeInMillis() - eventTStart.getTimeInMillis();
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+
                 Log.e("DIFERENCIA", "minutos: " + minutes);
 
                 Log.e("TIME", "Inicio " + scheduleTStart.get(Calendar.HOUR_OF_DAY)+ ":" + scheduleTStart.get(Calendar.MINUTE) + " (" + scheduleTStart.getTimeInMillis() + ")" + " ---- "
@@ -391,8 +390,6 @@ public class InsertActivity extends AppCompatActivity {
         alertDialog.setMessage("¿Desea eliminar la cita seleccionada?");
         alertDialog.setPositiveButton("Eliminar",new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
-
 
                 Calendar scheduleTStart = Calendar.getInstance();
                 scheduleTStart.setTimeInMillis(mSchedule.get(pos).timeStart.getTimeInMillis());
