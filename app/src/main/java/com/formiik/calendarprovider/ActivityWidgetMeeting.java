@@ -28,18 +28,17 @@ import me.everything.providers.android.calendar.Event;
 
 public class ActivityWidgetMeeting extends AppCompatActivity {
 
-    private ListView                                    mMeetingListView;
+    private ListView                                    mHourListView;
 
     private String                                      mAccount;
 
-    private List<Calendar>                              mCalendarsList;
+    private List<Calendar>                              mCalendarList;
     private Calendar                                    mCalendar;
 
     private java.util.Calendar                          mSelectedDate;
     private ArrayList<Event>                            mEventsDay;
 
-    private ArrayList<ActivityWidgetMeeting.Meeting>    mMeetingList;
-    private int                                         mSelectedSchedule;
+    private ArrayList<HourMeeting>                      mHourList;
     ActivityWidgetMeeting.AdapterMeeting                mAdapterMeeting;
 
     private List<Event>                                 mEventsList;
@@ -60,15 +59,15 @@ public class ActivityWidgetMeeting extends AppCompatActivity {
 
     private void initCalendar() {
 
-        mMeetingListView = (ListView) findViewById(R.id.list_meeting);
+        mHourListView = (ListView) findViewById(R.id.list_meeting);
 
         CalendarProvider calendarProvider = new CalendarProvider(getApplicationContext());
-        mCalendarsList = calendarProvider.getCalendars().getList();
+        mCalendarList = calendarProvider.getCalendars().getList();
 
-        for (int i = 0; i < mCalendarsList.size(); i++) {
-            if (mCalendarsList.get(i).name != null
-                    && mCalendarsList.get(i).name.contains(mAccount)) {
-                mCalendar = mCalendarsList.get(i);
+        for (int i = 0; i < mCalendarList.size(); i++) {
+            if (mCalendarList.get(i).name != null
+                    && mCalendarList.get(i).name.contains(mAccount)) {
+                mCalendar = mCalendarList.get(i);
                 mEventsList = calendarProvider.getEvents(mCalendar.id).getList();
                 break;
             }
@@ -98,51 +97,49 @@ public class ActivityWidgetMeeting extends AppCompatActivity {
             }
         }
 
-        mMeetingList = new ArrayList<>();
+        mHourList = new ArrayList<>();
 
 
         for (int hour = 0; hour <= 23; hour++) {
 
-            java.util.Calendar scheduleTStart = java.util.Calendar.getInstance();
-            scheduleTStart.set(mSelectedDate.get(java.util.Calendar.YEAR), mSelectedDate.get(java.util.Calendar.MONTH), mSelectedDate.get(java.util.Calendar.DAY_OF_MONTH), hour, 0);
+            java.util.Calendar hourStart = java.util.Calendar.getInstance();
+            hourStart.set(mSelectedDate.get(java.util.Calendar.YEAR), mSelectedDate.get(java.util.Calendar.MONTH), mSelectedDate.get(java.util.Calendar.DAY_OF_MONTH), hour, 0);
 
-            java.util.Calendar scheduleTEnd = java.util.Calendar.getInstance();
+            java.util.Calendar hourEnd = java.util.Calendar.getInstance();
 
             if (hour != 23) {
-                scheduleTEnd.set(mSelectedDate.get(java.util.Calendar.YEAR), mSelectedDate.get(java.util.Calendar.MONTH), mSelectedDate.get(java.util.Calendar.DAY_OF_MONTH), hour + 1, 0);
+                hourEnd.set(mSelectedDate.get(java.util.Calendar.YEAR), mSelectedDate.get(java.util.Calendar.MONTH), mSelectedDate.get(java.util.Calendar.DAY_OF_MONTH), hour + 1, 0);
             }else{
-                scheduleTEnd.set(mSelectedDate.get(java.util.Calendar.YEAR), mSelectedDate.get(java.util.Calendar.MONTH), mSelectedDate.get(java.util.Calendar.DAY_OF_MONTH), hour, 59);
+                hourEnd.set(mSelectedDate.get(java.util.Calendar.YEAR), mSelectedDate.get(java.util.Calendar.MONTH), mSelectedDate.get(java.util.Calendar.DAY_OF_MONTH), hour, 59);
             }
 
+            mHourList.add(new HourMeeting(hour, hourStart, hourEnd, new ArrayList<Event>()));
 
-
-            for (int j = 0; j < mEventsDay.size() ; j++){
+            for (int i = 0; i < mEventsDay.size() ; i++){
 
                 java.util.Calendar eventTStart = java.util.Calendar.getInstance();
-                eventTStart.setTimeInMillis(mEventsDay.get(j).dTStart);
+                eventTStart.setTimeInMillis(mEventsDay.get(i).dTStart);
 
                 java.util.Calendar eventTEnd = java.util.Calendar.getInstance();
-                eventTEnd.setTimeInMillis(mEventsDay.get(j).dTend);
+                eventTEnd.setTimeInMillis(mEventsDay.get(i).dTend);
 
-                if(eventTStart.get(java.util.Calendar.HOUR_OF_DAY) >= scheduleTStart.get(java.util.Calendar.HOUR_OF_DAY)  && eventTStart.get(java.util.Calendar.MINUTE) >= scheduleTStart.get(java.util.Calendar.MINUTE) &&
-                        eventTEnd.get(java.util.Calendar.HOUR_OF_DAY) <= scheduleTEnd.get(java.util.Calendar.HOUR_OF_DAY)  && eventTEnd.get(java.util.Calendar.MINUTE) <= scheduleTEnd.get(java.util.Calendar.MINUTE)){
+                if(eventTStart.get(java.util.Calendar.HOUR_OF_DAY) >= hourStart.get(java.util.Calendar.HOUR_OF_DAY)  &&
+                        eventTStart.get(java.util.Calendar.HOUR_OF_DAY) < hourEnd.get(java.util.Calendar.HOUR_OF_DAY)){
 
-                    mMeetingList.add(new ActivityWidgetMeeting.Meeting(hour, scheduleTStart, scheduleTEnd));
+                    mHourList.get(hour).mEventList.add(mEventsDay.get(i));
                 }
             }
-            
         }
 
-        mAdapterMeeting = new AdapterMeeting(mMeetingList);
-        mMeetingListView.setAdapter(mAdapterMeeting);
+        mAdapterMeeting = new AdapterMeeting(mHourList);
+        mHourListView.setAdapter(mAdapterMeeting);
 
-        mSelectedSchedule = -1;
         /*
-        mMeetingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mHourListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-                if(mMeetingList.get(position).availability) {
+                if(mHourList.get(position).availability) {
 
                     mSelectedSchedule = position;
                     mAdapterMeeting.notifyDataSetChanged();
@@ -158,12 +155,12 @@ public class ActivityWidgetMeeting extends AppCompatActivity {
         });
 
 
-        mMeetingListView.setLongClickable(true);
-        mMeetingListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mHourListView.setLongClickable(true);
+        mHourListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                if(!mMeetingList.get(i).availability)
+                if(!mHourList.get(i).availability)
                     deleteEvent(i);
 
                 return true;
@@ -184,10 +181,10 @@ public class ActivityWidgetMeeting extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
 
                 java.util.Calendar scheduleTStart = java.util.Calendar.getInstance();
-                scheduleTStart.setTimeInMillis(mMeetingList.get(pos).timeStart.getTimeInMillis());
+                scheduleTStart.setTimeInMillis(mHourList.get(pos).mHourStart.getTimeInMillis());
 
                 java.util.Calendar scheduleTEnd = java.util.Calendar.getInstance();
-                scheduleTEnd.setTimeInMillis(mMeetingList.get(pos).timeEnd.getTimeInMillis());
+                scheduleTEnd.setTimeInMillis(mHourList.get(pos).mHourEnd.getTimeInMillis());
 
                 for (int i = 0; i < mEventsDay.size() ; i++){
 
@@ -229,27 +226,27 @@ public class ActivityWidgetMeeting extends AppCompatActivity {
     }
 
 
-    class Meeting {
+    class HourMeeting {
 
-        public int hourPositionMeetingList;
-        public int hourInterval, minutesIntervale;
-        public java.util.Calendar timeStart, timeEnd;
+        public int mPositionHourList;
+        public java.util.Calendar mHourStart, mHourEnd;
+        public List<Event> mEventList;
 
-        public Meeting(int hourPositionMeetingList, java.util.Calendar timeStart, java.util.Calendar timeEnd) {
-            this.timeStart = timeStart;
-            this.timeEnd = timeEnd;
-            this.hourPositionMeetingList = hourPositionMeetingList;
-            this.hourInterval = timeEnd.get(java.util.Calendar.HOUR_OF_DAY) - timeStart.get(java.util.Calendar.HOUR_OF_DAY);
-            this.minutesIntervale = timeEnd.get(java.util.Calendar.MINUTE) - timeStart.get(java.util.Calendar.MINUTE);
+        public HourMeeting(int mPositionHourList, java.util.Calendar mHourStart, java.util.Calendar mHourEnd, List<Event> mEventList) {
+            this.mPositionHourList = mPositionHourList;
+            this.mHourStart = mHourStart;
+            this.mHourEnd = mHourEnd;
+            this.mEventList = mEventList;
         }
     }
 
+
     class AdapterMeeting extends BaseAdapter{
 
-        ArrayList<ActivityWidgetMeeting.Meeting> mMeetingList;
+        ArrayList<HourMeeting> mHourList;
 
-        public AdapterMeeting(ArrayList<ActivityWidgetMeeting.Meeting> mMeetingList) {
-            this.mMeetingList = mMeetingList;
+        public AdapterMeeting(ArrayList<HourMeeting> mHourList) {
+            this.mHourList = mHourList;
         }
 
         @Override
@@ -272,17 +269,17 @@ public class ActivityWidgetMeeting extends AppCompatActivity {
             mViewHolder.mTimeEndText.setVisibility(View.GONE);
 
 
-            String timeStart = "" + mMeetingList.get(position).timeStart.get(java.util.Calendar.HOUR_OF_DAY) + ":" +
-                    ((int) mMeetingList.get(position).timeStart.get(java.util.Calendar.MINUTE) == 0 ? "00" : String.valueOf(mMeetingList.get(position).timeStart.get(java.util.Calendar.MINUTE)));
+            String timeStart = "" + mHourList.get(position).mHourStart.get(java.util.Calendar.HOUR_OF_DAY) + ":" +
+                    ((int) mHourList.get(position).mHourStart.get(java.util.Calendar.MINUTE) == 0 ? "00" : String.valueOf(mHourList.get(position).mHourStart.get(java.util.Calendar.MINUTE)));
 
             mViewHolder.mTimeStartText.setText(timeStart);
 
-            Log.e("POSITION", " "+ position + "size " + mMeetingList.size());
+            Log.e("POSITION", " "+ position + "size " + mHourList.size());
 
             /*
-            if(position == mMeetingList.size()-1){
-                String timeEnd = "" + mMeetingList.get(position).timeEnd.get(java.util.Calendar.HOUR_OF_DAY) + ":" +
-                        ((int) mMeetingList.get(position).timeEnd.get(java.util.Calendar.MINUTE) == 0 ? "00" : String.valueOf(mMeetingList.get(position).timeEnd.get(java.util.Calendar.MINUTE)));
+            if(position == mHourList.size()-1){
+                String timeEnd = "" + mHourList.get(position).timeEnd.get(java.util.Calendar.HOUR_OF_DAY) + ":" +
+                        ((int) mHourList.get(position).timeEnd.get(java.util.Calendar.MINUTE) == 0 ? "00" : String.valueOf(mHourList.get(position).timeEnd.get(java.util.Calendar.MINUTE)));
 
                 mViewHolder.mTimeEndText.setText(timeEnd);
             }
@@ -296,13 +293,25 @@ public class ActivityWidgetMeeting extends AppCompatActivity {
                 mViewHolder.mMeetingContainerLayout.addView(valueTV);
             */
 
+            if (position == 3) {
+
+                TextView valueTV = new TextView(getApplicationContext());
+                valueTV.setText("This is a test");
+                valueTV.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 360));
+                valueTV.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.colorPrimary));
+                valueTV.setPadding(5,5,5,5);
+
+                mViewHolder.mMeetingContainerLayout.addView(valueTV);
+
+            }
 
             return view;
         }
 
         @Override
         public int getCount() {
-            return mMeetingList.size();
+            return mHourList.size();
         }
 
         @Override
@@ -319,7 +328,7 @@ public class ActivityWidgetMeeting extends AppCompatActivity {
 
             LinearLayout    mItemMeetingLayout,
                             mMeetingHourLayout,
-                    mMeetingContainerLayout,
+                            mMeetingContainerLayout,
                             mSeparatorLayout;
 
             TextView        mTimeStartText,

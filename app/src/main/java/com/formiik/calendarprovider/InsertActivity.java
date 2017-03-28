@@ -375,6 +375,9 @@ public class InsertActivity extends AppCompatActivity {
         }
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
+        // get the event ID that is the last element in the Uri
+        long eventID = Long.parseLong(uri.getLastPathSegment());
+
         Toast.makeText(getApplicationContext(), "Cita creada", Toast.LENGTH_SHORT).show();
 
         finish();

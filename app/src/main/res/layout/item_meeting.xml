@@ -58,7 +58,7 @@
             android:layout_height="1dp"
             android:background="@color/blue_item"
             android:id="@+id/layout_separator"
-            android:layout_marginTop="9dp">
+            android:layout_marginTop="0dp">
         </LinearLayout>
 
         <LinearLayout
@@ -66,6 +66,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/layout_meeting_container">
+
+
+
         </LinearLayout>
 
 

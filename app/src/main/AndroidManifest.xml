@@ -25,6 +25,10 @@
         </activity>
         <activity android:name=".ActivityWidgetMeeting">
         </activity>
+        <activity android:name=".ActivityWidgetMeeting2">
+        </activity>
+        <activity android:name=".ActivityWidgetMeeting3">
+        </activity>
     </application>
 
 </manifest>

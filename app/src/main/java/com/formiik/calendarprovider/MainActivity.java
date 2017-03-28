@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
 
-    private Button mInsertEventButton, mViewCalendarButton, mMeetingFormiikButton;
+    private Button mInsertEventButton, mViewCalendarButton, mMeetingFormiikButton, mMeetingFormiikButtonLib, mMeetingFormiikButtonLibFrag;
 
     private TextView mTextAccount;
 
@@ -84,6 +84,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        mMeetingFormiikButtonLib = (Button) findViewById(R.id.button_meeting_lib);
+        mMeetingFormiikButtonLib.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getApplicationContext(), ActivityWidgetMeeting2.class);
+                intent.putExtra("mAccount", mAccount);
+                startActivity(intent);
+
+            }
+        });
+
+        mMeetingFormiikButtonLibFrag = (Button) findViewById(R.id.button_meeting_lib_frag);
+        mMeetingFormiikButtonLibFrag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getApplicationContext(), ActivityWidgetMeeting3.class);
+                intent.putExtra("mAccount", mAccount);
+                startActivity(intent);
+
+            }
+        });
+
+
         mTextAccount = (TextView) findViewById(R.id.text_account);
 
         mSharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
@@ -123,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (accounts.length > 1) {
 
-                final AlertDialogAccount dialogAccount = new AlertDialogAccount(getApplicationContext(), mAccountsList);
+                final AlertDialogAccount dialogAccount = new AlertDialogAccount(MainActivity.this, mAccountsList);
 
                 dialogAccount.setTitle("Selecciona una cuenta");
                 dialogAccount.setView(getLayoutInflater().inflate(R.layout.alert_dialog_account, null));
@@ -136,6 +162,10 @@ public class MainActivity extends AppCompatActivity {
                                 if (!dialogAccount.getAccount().equalsIgnoreCase("") && dialogAccount.getAccount() != null) {
 
                                     mAccount = dialogAccount.getAccount();
+
+                                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                                    editor.putString(mKeyAccount, mAccount);
+                                    editor.commit();
 
                                     dialogAccount.dismiss();
                                 }
@@ -177,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class AlertDialogAccount extends AlertDialog{
+    class AlertDialogAccount extends AlertDialog {
 
         private Context context;
         private ListView mListView;

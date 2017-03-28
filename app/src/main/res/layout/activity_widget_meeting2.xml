@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_widget_meeting2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.formiik.calendarprovider.ActivityWidgetMeeting2"
+    android:background="#fff"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <Button
+        android:text="Add Event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:onClick="addEvent"/>
+
+    <com.alamkanak.weekview.WeekView
+        android:id="@+id/weekView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:eventTextColor="@android:color/white"
+        app:textSize="13sp"
+        app:hourHeight="100dp"
+        app:headerColumnPadding="8dp"
+        app:headerColumnTextColor="@color/toolbar_text"
+        app:headerRowPadding="10dp"
+        app:columnGap="8dp"
+        app:noOfVisibleDays="1"
+        app:headerRowBackgroundColor="#ffffffff"
+        app:dayBackgroundColor="#ffffffff"
+        app:todayBackgroundColor="#ffffffff"
+        app:headerColumnBackground="#ffffffff"
+        app:todayHeaderTextColor="@color/accent" />
+
+</LinearLayout>
